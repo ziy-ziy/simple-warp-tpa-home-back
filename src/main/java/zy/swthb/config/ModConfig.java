@@ -1,0 +1,307 @@
+package zy.swthb.config;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.level.storage.LevelResource;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.*;
+
+/**
+ * 存档配置管理器
+ * 统一管理模组设置和所有传送点数据（家、Warp），使用 JSON 文件持久化。
+ * <p>
+ * 每个存档独立存储：<存档目录>/data/simple-warp-tpa-home-back/data.json
+ * 专用服务器：world/data/simple-warp-tpa-home-back/data.json
+ * 单人游戏：saves/<世界名>/data/simple-warp-tpa-home-back/data.json
+ */
+public class ModConfig {
+
+    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    private static final Logger LOGGER = LoggerFactory.getLogger("simple-warp-tpa-home-back-config");
+
+    // ---------- 单例 ----------
+
+    private static ModConfig instance;
+
+    public static ModConfig getInstance() {
+        if (instance == null) {
+            instance = new ModConfig();
+        }
+        return instance;
+    }
+
+    // 当前存档的服务器引用（用于获取存档路径）
+    private MinecraftServer server;
+
+    // 当前数据文件路径
+    private Path dataFile;
+
+    // ---------- 设置 ----------
+
+    private int maxHomes = 5;
+    private int maxWarps = 5;
+
+    /** 传送倒计时（秒），默认 5，设为 0 则无延迟 */
+    private int teleportDelay = 0;
+
+    /** /back 功能开关，默认关闭 */
+    private boolean backEnabled = false;
+
+    // ---------- 数据 ----------
+
+    private Map<String, List<HomeEntry>> homes = new HashMap<>();
+    private Map<String, WarpEntry> warps = new HashMap<>();
+
+    public MinecraftServer getServer() {
+        return server;
+    }
+
+    // ---------- 内部数据类 ----------
+
+    public static class HomeEntry {
+        public String name;
+        public String world;
+        public double x, y, z;
+        public float yaw, pitch;
+
+        public HomeEntry(String name, String world, double x, double y, double z, float yaw, float pitch) {
+            this.name = name;
+            this.world = world;
+            this.x = x;
+            this.y = y;
+            this.z = z;
+            this.yaw = yaw;
+            this.pitch = pitch;
+        }
+    }
+
+    public static class WarpEntry {
+        public String world;
+        public double x, y, z;
+        public float yaw, pitch;
+
+        public WarpEntry(String world, double x, double y, double z, float yaw, float pitch) {
+            this.world = world;
+            this.x = x;
+            this.y = y;
+            this.z = z;
+            this.yaw = yaw;
+            this.pitch = pitch;
+        }
+    }
+
+    // ---------- 生命周期 ----------
+
+    private ModConfig() {}
+
+    /**
+     * 从当前存档的数据目录加载配置文件。
+     *
+     * @param server 当前 Minecraft 服务器实例
+     */
+    public static void load(MinecraftServer server) {
+        ModConfig config = getInstance();
+        config.server = server;
+        config.dataFile = server.getWorldPath(LevelResource.DATA)
+                .resolve("simple-warp-tpa-home-back")
+                .resolve("data.json");
+
+        if (!Files.exists(config.dataFile)) {
+            LOGGER.info("存档数据不存在，将使用默认设置创建新文件");
+            config.save();
+            return;
+        }
+
+        try (BufferedReader reader = Files.newBufferedReader(config.dataFile)) {
+            JsonData data = GSON.fromJson(reader, JsonData.class);
+            if (data != null) {
+                config.maxHomes = data.maxHomes;
+                config.maxWarps = data.maxWarps;
+                config.teleportDelay = data.teleportDelay;
+                config.backEnabled = data.backEnabled;
+                config.homes = data.homes != null ? data.homes : new HashMap<>();
+                config.warps = data.warps != null ? data.warps : new HashMap<>();
+                LOGGER.info("存档数据已加载: {}", config.dataFile);
+            }
+        } catch (Exception e) {
+            LOGGER.error("加载存档数据失败，将使用默认设置: {}", e.getMessage());
+        }
+    }
+
+    /**
+     * 将当前配置保存到当前存档的数据目录。
+     */
+    public void save() {
+        if (dataFile == null) {
+            LOGGER.warn("未设置数据文件路径，无法保存");
+            return;
+        }
+        try {
+            Files.createDirectories(dataFile.getParent());
+            try (BufferedWriter writer = Files.newBufferedWriter(dataFile)) {
+                JsonData data = new JsonData();
+                data.maxHomes = this.maxHomes;
+                data.maxWarps = this.maxWarps;
+                data.teleportDelay = this.teleportDelay;
+                data.backEnabled = this.backEnabled;
+                data.homes = this.homes;
+                data.warps = this.warps;
+                GSON.toJson(data, writer);
+                writer.flush();
+            }
+        } catch (Exception e) {
+            LOGGER.error("保存存档数据失败: {}", e.getMessage());
+        }
+    }
+
+    /**
+     * 重置单例，用于切换存档时清除旧状态。
+     */
+    public static void reset() {
+        instance = null;
+    }
+
+    private static class JsonData {
+        int maxHomes = 5;
+        int maxWarps = 20;
+        int teleportDelay = 5;
+        boolean backEnabled = true;
+        Map<String, List<HomeEntry>> homes = new HashMap<>();
+        Map<String, WarpEntry> warps = new HashMap<>();
+    }
+
+    // ---------- Homes 方法 ----------
+
+    public int getMaxHomes() {
+        return maxHomes;
+    }
+
+    public void setMaxHomes(int maxHomes) {
+        this.maxHomes = maxHomes;
+        save();
+    }
+
+    public List<HomeEntry> getHomes(UUID playerUuid) {
+        List<HomeEntry> list = homes.get(playerUuid.toString());
+        return list != null ? Collections.unmodifiableList(list) : List.of();
+    }
+
+    public HomeEntry getHome(UUID playerUuid, String name) {
+        List<HomeEntry> list = homes.get(playerUuid.toString());
+        if (list == null) return null;
+        for (HomeEntry h : list) {
+            if (h.name.equals(name)) return h;
+        }
+        return null;
+    }
+
+    public boolean isAtMaxHomes(UUID playerUuid) {
+        List<HomeEntry> list = homes.get(playerUuid.toString());
+        return list != null && list.size() >= maxHomes;
+    }
+
+    public boolean homeExists(UUID playerUuid, String name) {
+        List<HomeEntry> list = homes.get(playerUuid.toString());
+        if (list == null) return false;
+        return list.stream().anyMatch(h -> h.name.equals(name));
+    }
+
+    public int getHomeCount(UUID playerUuid) {
+        List<HomeEntry> list = homes.get(playerUuid.toString());
+        return list != null ? list.size() : 0;
+    }
+
+    public void setHome(UUID playerUuid, HomeEntry entry) {
+        String key = playerUuid.toString();
+        List<HomeEntry> list = homes.computeIfAbsent(key, _ -> new ArrayList<>());
+
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).name.equals(entry.name)) {
+                list.set(i, entry);
+                save();
+                return;
+            }
+        }
+
+        list.add(entry);
+        save();
+    }
+
+    public boolean removeHome(UUID playerUuid, String name) {
+        String key = playerUuid.toString();
+        List<HomeEntry> list = homes.get(key);
+        if (list == null) return false;
+
+        boolean removed = list.removeIf(h -> h.name.equals(name));
+        if (removed) {
+            if (list.isEmpty()) {
+                homes.remove(key);
+            }
+            save();
+        }
+        return removed;
+    }
+
+    // ---------- 传送延迟 ----------
+
+    public int getTeleportDelay() {
+        return teleportDelay;
+    }
+
+    public void setTeleportDelay(int teleportDelay) {
+        this.teleportDelay = Math.clamp(teleportDelay, 0, 120);
+        save();
+    }
+
+    // ---------- Back 功能 ----------
+
+    public boolean isBackEnabled() {
+        return backEnabled;
+    }
+
+    public void setBackEnabled(boolean backEnabled) {
+        this.backEnabled = backEnabled;
+        save();
+    }
+
+    // ---------- Warps 方法 ----------
+
+    public int getMaxWarps() {
+        return maxWarps;
+    }
+
+    public void setMaxWarps(int maxWarps) {
+        this.maxWarps = maxWarps;
+        save();
+    }
+
+    public Map<String, WarpEntry> getWarps() {
+        return Collections.unmodifiableMap(warps);
+    }
+
+    public WarpEntry getWarp(String name) {
+        return warps.get(name);
+    }
+
+    public void setWarp(String name, WarpEntry entry) {
+        warps.put(name, entry);
+        save();
+    }
+
+    public boolean removeWarp(String name) {
+        if (warps.containsKey(name)) {
+            warps.remove(name);
+            save();
+            return true;
+        }
+        return false;
+    }
+}

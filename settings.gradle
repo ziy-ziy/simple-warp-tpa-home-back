@@ -10,4 +10,4 @@ pluginManagement {
 }
 
 // Should match your modid
-rootProject.name = 'simple-warp-tpa-home'
+rootProject.name = 'simple-warp-tpa-home-back'
