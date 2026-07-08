@@ -12,6 +12,7 @@
 
 | 分类 | 命令 | 权限 | 说明 |
 |------|------|------|------|
+| **Back** | `/back` | 所有人 | 返回死亡地点或上一次传送前的位置（支持跨维度） |
 | **TPA** | `/tpa <玩家>` | 所有人 | 向目标玩家发送传送请求 |
 | | `/tpay` | 所有人 | 接受传送请求 |
 | | `/tpan` | 所有人 | 拒绝传送请求 |
@@ -23,12 +24,11 @@
 | | `/warps` | 所有人 | 列出所有传送点（可点击传送） |
 | | `/setwarp <名称>` | **OP 专用** | 设置全局传送点（支持中文名） |
 | | `/delwarp <名称>` | **OP 专用** | 删除传送点 |
-| **Back** | `/back` | 所有人 | 返回死亡地点或上一次传送前的位置（支持跨维度） |
-| | `/swthbconfig backEnabled true` | **OP 专用** | 开启 Back 功能 |
-| | `/swthbconfig backEnabled false` | **OP 专用** | 关闭 Back 功能（默认） |
 | **配置** | `/swthbconfig maxHomes <数量>` | **OP 专用** | 修改每名玩家最大家的数量（默认 5 个） |
 | | `/swthbconfig maxWarps <数量>` | **OP 专用** | 修改 Warp 最大数量（默认 5 个） |
 | | `/swthbconfig teleportDelay <秒>` | **OP 专用** | 修改传送倒计时（默认 0 秒） |
+| | `/swthbconfig backEnabled true/false` | **OP 专用** | 开启/关闭 Back 功能（默认关闭） |
+| | `/swthbconfig teleportEffects true/false` | **所有人** | 开启/关闭传送粒子效果（默认关闭） |
 | | `/swthbconfig reload` | **OP 专用** | 从磁盘重新加载配置 |
 | | `/swthbconfig save` | **OP 专用** | 手动保存配置到磁盘 |
 
@@ -41,6 +41,11 @@
 - 开启后，`/tpay`、`/home`、`/warp` 需等待指定秒数才会执行传送
 - 等待期间移动则取消传送
 - 倒计时显示在动作栏
+
+### 传送粒子效果
+- 默认关闭（`teleportEffectsEnabled: false`）
+- 开启后，每次传送会播放末影人风格的音效和紫色粒子
+- 所有人可通过 `/swthbconfig teleportEffects true/false` 自行开关
 
 ### TPA 传送请求
 
@@ -82,6 +87,7 @@
   "maxHomes": 5,
   "maxWarps": 5,
   "teleportDelay": 0,
+  "teleportEffectsEnabled": false,
   "backEnabled": false,
   "homes": {
     "玩家UUID": [
@@ -123,6 +129,7 @@ No pop-up windows, no required dependencies, fully localized translations! Insta
 
 | Category | Command | Permission | Description |
 |----------|---------|------------|-------------|
+| **Back** | `/back` | All Players | Return to your last death location or pre-teleport position (cross-dimension supported) |
 | **TPA** | `/tpa <player>` | All Players | Send a teleport request to the target player |
 | | `/tpay` | All Players | Accept an incoming teleport request |
 | | `/tpan` | All Players | Decline an incoming teleport request |
@@ -134,12 +141,11 @@ No pop-up windows, no required dependencies, fully localized translations! Insta
 | | `/warps` | All Players | List all public warps (clickable for instant teleport) |
 | | `/setwarp <name>` | **OP Only** | Create a global public warp point |
 | | `/delwarp <name>` | **OP Only** | Delete a public warp point |
-| **Back** | `/back` | All Players | Return to your last death location or pre-teleport position (cross-dimension supported) |
-| | `/swthbconfig backEnabled true` | **OP Only** | Enable the Back feature |
-| | `/swthbconfig backEnabled false` | **OP Only** | Disable the Back feature (disabled by default) |
 | **Config** | `/swthbconfig maxHomes <amount>` | **OP Only** | Adjust the maximum number of homes per player (default: 5) |
 | | `/swthbconfig maxWarps <amount>` | **OP Only** | Adjust the global maximum number of warps (default: 5) |
 | | `/swthbconfig teleportDelay <seconds>` | **OP Only** | Change the teleport countdown (default: 0 seconds) |
+| | `/swthbconfig backEnabled true/false` | **OP Only** | Enable/disable the Back feature (default: off) |
+| | `/swthbconfig teleportEffects true/false` | **All Players** | Toggle teleport particle effects (default: off) |
 | | `/swthbconfig reload` | **OP Only** | Reload configuration data from disk |
 | | `/swthbconfig save` | **OP Only** | Manually save all configuration to disk |
 
@@ -152,6 +158,11 @@ No pop-up windows, no required dependencies, fully localized translations! Insta
 - When enabled, `/tpay`, `/home`, and `/warp` wait the specified number of seconds before teleporting
 - Moving during the countdown cancels the teleport
 - Countdown is displayed on the action bar
+
+### Teleport Particle Effects
+- Off by default (`teleportEffectsEnabled: false`)
+- When enabled, plays an Enderman-style teleport sound and purple particles on every teleport
+- All players can toggle this via `/swthbconfig teleportEffects true/false`
 
 ### TPA Teleport Request System
 
@@ -193,6 +204,7 @@ All data is stored in `saves/<save>/data/simple-warp-tpa-home-back/data.json`:
   "maxHomes": 5,
   "maxWarps": 5,
   "teleportDelay": 0,
+  "teleportEffectsEnabled": false,
   "backEnabled": false,
   "homes": {
     "PlayerUUID": [
