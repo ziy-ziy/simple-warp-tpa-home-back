@@ -68,7 +68,7 @@ public class BackCommand {
                 bp.pitch(),
                 TeleportTransition.DO_NOTHING
         );
-        player.teleport(transition);
+        TeleportHandler.teleportImmediate(player, transition);
 
         // 显示返回来源类型（死亡地点 / 传送前位置）
         String typeKey = bp.type() == BackHandler.LocationType.DEATH

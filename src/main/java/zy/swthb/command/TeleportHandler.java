@@ -87,6 +87,22 @@ public class TeleportHandler {
     }
 
     /**
+     * 立即传送并播放到达音效/粒子（不经过倒计时），供 /back 使用。
+     *
+     * @param player     待传送的玩家
+     * @param transition 传送参数
+     */
+    public static void teleportImmediate(ServerPlayer player, TeleportTransition transition) {
+        player.teleport(transition);
+        playArrivalEffects(
+                transition.newLevel(),
+                transition.position().x(),
+                transition.position().y(),
+                transition.position().z()
+        );
+    }
+
+    /**
      * 取消玩家的传送倒计时
      *
      * @param player    目标玩家
