@@ -15,6 +15,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.portal.TeleportTransition;
 import net.minecraft.world.phys.Vec3;
 import zy.swthb.config.ModConfig;
+import zy.swthb.i18n.Msg;
 
 /**
  * /back 命令 — 返回最后一次死亡或传送前的位置
@@ -35,7 +36,7 @@ public class BackCommand {
 
         // 检查功能是否开启
         if (!ModConfig.getInstance().isBackEnabled()) {
-            source.sendFailure(Component.translatableWithFallback(
+            source.sendFailure(Msg.tr(
                     "swthb.back.disabled", "返回功能已关闭"));
             return 0;
         }
@@ -43,7 +44,7 @@ public class BackCommand {
         // 检查是否有 back 点
         BackHandler.BackPoint bp = BackHandler.getBackPoint(player);
         if (bp == null) {
-            source.sendFailure(Component.translatableWithFallback(
+            source.sendFailure(Msg.tr(
                     "swthb.back.none", "没有可返回的位置"));
             return 0;
         }
@@ -54,7 +55,7 @@ public class BackCommand {
         ServerLevel targetLevel = source.getServer().getLevel(dimKey);
 
         if (targetLevel == null) {
-            source.sendFailure(Component.translatableWithFallback(
+            source.sendFailure(Msg.tr(
                     "swthb.back.dimension_invalid", "目标维度数据异常，无法返回"));
             return 0;
         }
@@ -77,8 +78,8 @@ public class BackCommand {
                 ? "死亡地点" : "传送前位置";
 
         player.sendSystemMessage(
-                Component.translatableWithFallback("swthb.back.success",
-                        "已返回至 %s", Component.translatableWithFallback(typeKey, typeFallback))
+                Msg.tr("swthb.back.success",
+                        "已返回至 %s", Msg.tr(typeKey, typeFallback))
                         .withStyle(ChatFormatting.GREEN)
         );
 

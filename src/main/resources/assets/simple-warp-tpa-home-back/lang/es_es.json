@@ -59,4 +59,7 @@
   "swthb.dim.overworld": "Mundo Superior",
   "swthb.dim.nether": "Nether",
   "swthb.dim.end": "End"
+  ,
+"swthb.config.language_set": "Idioma del mod cambiado de %s a %s",
+  "swthb.config.language_invalid": "Código de idioma no compatible: %s (disponibles: auto, %s)"
 }

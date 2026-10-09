@@ -29,6 +29,7 @@
 | | `/swthbconfig teleportDelay <秒>` | **OP 专用** | 修改传送倒计时（默认 0 秒） |
 | | `/swthbconfig backEnabled true/false` | **OP 专用** | 开启/关闭 Back 功能（默认关闭） |
 | | `/swthbconfig teleportEffects true/false` | **所有人** | 开启/关闭传送粒子效果（默认关闭） |
+| | `/swthbconfig language <语言代码>` | **OP 专用** | 强制模组语言（`auto`=跟随客户端，或 `en_us`、`zh_cn` 等，默认 `auto`） |
 | | `/swthbconfig reload` | **OP 专用** | 从磁盘重新加载配置 |
 | | `/swthbconfig save` | **OP 专用** | 手动保存配置到磁盘 |
 
@@ -89,6 +90,7 @@
   "teleportDelay": 0,
   "teleportEffectsEnabled": false,
   "backEnabled": false,
+  "language": "auto",
   "homes": {
     "玩家UUID": [
       { "name": "home1", "world": "minecraft:overworld", "x": 100, "y": 64, "z": 200, "yaw": 0, "pitch": 0 }
@@ -112,6 +114,26 @@
 
 - 客户端装有 mod → 根据客户端语言显示翻译
 - 客户端未装 mod → 显示简体中文
+
+### 服务端强制语言
+
+OP 可通过 `/swthbconfig language <语言代码>` 让服务器统一显示某种语言（如 `en_us`、`zh_cn`），
+此时由服务端解析文本，无论客户端是否安装 mod、客户端语言为何，所有玩家都显示该语言。
+使用 `/swthbconfig language auto` 可恢复为跟随客户端语言（默认）。
+
+| 语言代码 | 语言 |
+|----------|------|
+| `auto` | 跟随客户端语言（默认） |
+| `en_us` | 英文 |
+| `zh_cn` | 简体中文 |
+| `zh_tw` | 繁體中文（台灣） |
+| `zh_hk` | 繁體中文（香港） |
+| `es_es` | 西班牙文 |
+| `fr_fr` | 法文 |
+| `ja_jp` | 日文 |
+| `ru_ru` | 俄文 |
+| `hi_in` | 印地語 |
+| `ar_sa` | 阿拉伯語 |
 
 欢迎提交添加更多语言。
 
@@ -146,6 +168,7 @@ No pop-up windows, no required dependencies, fully localized translations! Insta
 | | `/swthbconfig teleportDelay <seconds>` | **OP Only** | Change the teleport countdown (default: 0 seconds) |
 | | `/swthbconfig backEnabled true/false` | **OP Only** | Enable/disable the Back feature (default: off) |
 | | `/swthbconfig teleportEffects true/false` | **All Players** | Toggle teleport particle effects (default: off) |
+| | `/swthbconfig language <code>` | **OP Only** | Force the mod language (`auto` = follow client, or `en_us`, `zh_cn`, etc.; default `auto`) |
 | | `/swthbconfig reload` | **OP Only** | Reload configuration data from disk |
 | | `/swthbconfig save` | **OP Only** | Manually save all configuration to disk |
 
@@ -206,6 +229,7 @@ All data is stored in `saves/<save>/data/simple-warp-tpa-home-back/data.json`:
   "teleportDelay": 0,
   "teleportEffectsEnabled": false,
   "backEnabled": false,
+  "language": "auto",
   "homes": {
     "PlayerUUID": [
       { "name": "home1", "world": "minecraft:overworld", "x": 100, "y": 64, "z": 200, "yaw": 0, "pitch": 0 }
@@ -229,5 +253,26 @@ Built-in language files: Simplified Chinese, Traditional Chinese, English, Spani
 
 - If the client has this mod installed: text displays according to the client's game language setting
 - If the client does not have this mod installed: text defaults to Simplified Chinese
+
+### Server-Forced Language
+
+An OP can run `/swthbconfig language <code>` (e.g. `en_us`, `zh_cn`) to force one language server-wide.
+In this mode the server resolves the text itself, so every player sees that language regardless of
+whether they have the mod installed or what their client language is. Use `/swthbconfig language auto`
+to go back to following each client's language (the default).
+
+| Code | Language |
+|------|----------|
+| `auto` | Follow each client's language (default) |
+| `en_us` | English |
+| `zh_cn` | Simplified Chinese |
+| `zh_tw` | Traditional Chinese (Taiwan) |
+| `zh_hk` | Traditional Chinese (Hong Kong) |
+| `es_es` | Spanish |
+| `fr_fr` | French |
+| `ja_jp` | Japanese |
+| `ru_ru` | Russian |
+| `hi_in` | Hindi |
+| `ar_sa` | Arabic |
 
 Contributions for additional translations are welcome.

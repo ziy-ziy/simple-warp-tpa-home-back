@@ -8,6 +8,8 @@ import net.minecraft.world.level.storage.LevelResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import zy.swthb.i18n.Translations;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.nio.file.Files;
@@ -57,6 +59,9 @@ public class ModConfig {
 
     /** /back 功能开关，默认关闭 */
     private boolean backEnabled = false;
+
+    /** 模组语言：auto 跟随客户端（默认），或指定语言代码（如 en_us、zh_cn） */
+    private String language = Translations.AUTO;
 
     // ---------- 数据 ----------
 
@@ -135,6 +140,7 @@ public class ModConfig {
         if (!Files.exists(config.dataFile)) {
             LOGGER.info("存档数据不存在，将使用默认设置创建新文件");
             config.save();
+            Translations.setLocale(config.language);
             return;
         }
 
@@ -146,6 +152,7 @@ public class ModConfig {
                 config.teleportDelay = data.teleportDelay;
                 config.teleportEffectsEnabled = data.teleportEffectsEnabled;
                 config.backEnabled = data.backEnabled;
+                config.language = data.language != null ? data.language : Translations.AUTO;
                 config.homes = data.homes != null ? data.homes : new HashMap<>();
                 config.warps = data.warps != null ? data.warps : new HashMap<>();
                 LOGGER.info("存档数据已加载: {}", config.dataFile);
@@ -153,6 +160,7 @@ public class ModConfig {
         } catch (Exception e) {
             LOGGER.error("加载存档数据失败，将使用默认设置: {}", e.getMessage());
         }
+        Translations.setLocale(config.language);
     }
 
     /**
@@ -172,6 +180,7 @@ public class ModConfig {
                 data.teleportDelay = this.teleportDelay;
                 data.teleportEffectsEnabled = this.teleportEffectsEnabled;
                 data.backEnabled = this.backEnabled;
+                data.language = this.language;
                 data.homes = this.homes;
                 data.warps = this.warps;
                 GSON.toJson(data, writer);
@@ -195,6 +204,7 @@ public class ModConfig {
         int teleportDelay = 0;
         boolean teleportEffectsEnabled = false;
         boolean backEnabled = false;
+        String language = Translations.AUTO;
         Map<String, List<HomeEntry>> homes = new HashMap<>();
         Map<String, WarpEntry> warps = new HashMap<>();
     }
@@ -301,6 +311,18 @@ public class ModConfig {
 
     public void setBackEnabled(boolean backEnabled) {
         this.backEnabled = backEnabled;
+        save();
+    }
+
+    // ---------- 模组语言 ----------
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = (language == null || language.isBlank()) ? Translations.AUTO : language.toLowerCase();
+        Translations.setLocale(this.language);
         save();
     }
 

@@ -10,6 +10,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.portal.TeleportTransition;
 import net.minecraft.world.phys.Vec3;
 import zy.swthb.config.ModConfig;
+import zy.swthb.i18n.Msg;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -80,7 +81,7 @@ public class TeleportHandler {
 
         // 发送初始倒计时提示（动作栏）
         player.sendOverlayMessage(
-                Component.translatableWithFallback("swthb.teleport.countdown",
+                Msg.tr("swthb.teleport.countdown",
                         "传送倒计时：%s 秒...", String.valueOf(delay))
                         .withStyle(ChatFormatting.YELLOW)
         );
@@ -149,8 +150,9 @@ public class TeleportHandler {
                 it.remove();
                 task.player().sendOverlayMessage(Component.literal("")); // 清空动作栏
                 task.player().sendSystemMessage(
-                        Component.translatableWithFallback("swthb.teleport.cancelled_move",
-                                "§c传送已取消，因为你移动了")
+                        Msg.tr("swthb.teleport.cancelled_move",
+                                        "传送已取消，因为你移动了")
+                                .withStyle(ChatFormatting.RED)
                 );
                 if (task.onCancel() != null) task.onCancel().run();
                 continue;
@@ -176,7 +178,7 @@ public class TeleportHandler {
                 if (remaining % 20 == 0) {
                     int seconds = remaining / 20;
                     task.player().sendOverlayMessage(
-                            Component.translatableWithFallback("swthb.teleport.countdown",
+                            Msg.tr("swthb.teleport.countdown",
                                     "传送倒计时：%s 秒...", String.valueOf(seconds))
                                     .withStyle(ChatFormatting.YELLOW)
                     );

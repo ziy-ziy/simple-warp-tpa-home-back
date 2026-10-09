@@ -13,6 +13,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.portal.TeleportTransition;
 import zy.swthb.command.BackHandler;
 import zy.swthb.command.TeleportHandler;
+import zy.swthb.i18n.Msg;
 
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 
@@ -81,12 +82,12 @@ public class TpaCommand {
         try {
             target = EntityArgument.getPlayer(ctx, "target");
         } catch (Exception e) {
-            source.sendFailure(Component.translatableWithFallback("swthb.tpa.player_not_found", "玩家未找到"));
+            source.sendFailure(Msg.tr("swthb.tpa.player_not_found", "玩家未找到"));
             return 0;
         }
 
         if (player.getUUID().equals(target.getUUID())) {
-            source.sendFailure(Component.translatableWithFallback("swthb.tpa.self", "不能向自己发送传送请求"));
+            source.sendFailure(Msg.tr("swthb.tpa.self", "不能向自己发送传送请求"));
             return 0;
         }
 
@@ -95,7 +96,7 @@ public class TpaCommand {
         // 通知发起方
         Component senderName = target.getDisplayName().copy().withStyle(ChatFormatting.AQUA);
         player.sendSystemMessage(
-                Component.translatableWithFallback("swthb.tpa.sender_msg",
+                Msg.tr("swthb.tpa.sender_msg",
                         "%s 的传送请求已发送，等待回应...", senderName)
                         .withStyle(ChatFormatting.GREEN)
         );
@@ -103,24 +104,24 @@ public class TpaCommand {
         // 通知目标方，附带可点击的接受/拒绝按钮
         Component requesterName = player.getDisplayName().copy().withStyle(ChatFormatting.AQUA);
 
-        Component acceptBtn = Component.translatableWithFallback("swthb.tpa.accept_btn", " [接受] ")
+        Component acceptBtn = Msg.tr("swthb.tpa.accept_btn", " [接受] ")
                 .withStyle(style -> style
                         .withColor(ChatFormatting.GREEN)
                         .withBold(true)
                         .withClickEvent(new ClickEvent.RunCommand("/tpay"))
                         .withHoverEvent(new HoverEvent.ShowText(
-                                Component.translatableWithFallback("swthb.tpa.accept_hover", "点击接受传送"))));
+                                Msg.tr("swthb.tpa.accept_hover", "点击接受传送"))));
 
-        Component denyBtn = Component.translatableWithFallback("swthb.tpa.deny_btn", " [拒绝] ")
+        Component denyBtn = Msg.tr("swthb.tpa.deny_btn", " [拒绝] ")
                 .withStyle(style -> style
                         .withColor(ChatFormatting.RED)
                         .withBold(true)
                         .withClickEvent(new ClickEvent.RunCommand("/tpan"))
                         .withHoverEvent(new HoverEvent.ShowText(
-                                Component.translatableWithFallback("swthb.tpa.deny_hover", "点击拒绝传送"))));
+                                Msg.tr("swthb.tpa.deny_hover", "点击拒绝传送"))));
 
         target.sendSystemMessage(
-                Component.translatableWithFallback("swthb.tpa.receiver_msg",
+                Msg.tr("swthb.tpa.receiver_msg",
                         "%s 请求传送到你的位置 %s %s",
                         requesterName, acceptBtn, denyBtn)
         );
@@ -138,20 +139,20 @@ public class TpaCommand {
 
         PendingRequest req = PENDING.remove(player.getUUID());
         if (req == null) {
-            source.sendFailure(Component.translatableWithFallback("swthb.tpa.no_request", "没有待处理的传送请求"));
+            source.sendFailure(Msg.tr("swthb.tpa.no_request", "没有待处理的传送请求"));
             return 0;
         }
 
         ServerPlayer requester = player.level().getServer().getPlayerList().getPlayer(req.requesterId());
         if (requester == null) {
-            source.sendFailure(Component.translatableWithFallback("swthb.tpa.requester_offline", "请求者已离线"));
+            source.sendFailure(Msg.tr("swthb.tpa.requester_offline", "请求者已离线"));
             return 0;
         }
 
         // 通知接受方
         Component requesterName = requester.getDisplayName().copy().withStyle(ChatFormatting.AQUA);
         player.sendSystemMessage(
-                Component.translatableWithFallback("swthb.tpa.accepted_receiver",
+                Msg.tr("swthb.tpa.accepted_receiver",
                         "已接受 %s 的传送请求", requesterName)
                         .withStyle(ChatFormatting.GREEN)
         );
@@ -173,7 +174,7 @@ public class TpaCommand {
                 requester,
                 transition,
                 () -> requester.sendSystemMessage(
-                        Component.translatableWithFallback("swthb.tpa.accepted_sender",
+                        Msg.tr("swthb.tpa.accepted_sender",
                                 "%s 已接受你的传送请求", playerName)
                                 .withStyle(ChatFormatting.GREEN)
                 ),
@@ -193,7 +194,7 @@ public class TpaCommand {
 
         PendingRequest req = PENDING.remove(player.getUUID());
         if (req == null) {
-            source.sendFailure(Component.translatableWithFallback("swthb.tpa.no_request", "没有待处理的传送请求"));
+            source.sendFailure(Msg.tr("swthb.tpa.no_request", "没有待处理的传送请求"));
             return 0;
         }
 
@@ -201,7 +202,7 @@ public class TpaCommand {
         if (requester != null) {
             Component playerName = player.getDisplayName().copy().withStyle(ChatFormatting.AQUA);
             requester.sendSystemMessage(
-                    Component.translatableWithFallback("swthb.tpa.denied_sender",
+                    Msg.tr("swthb.tpa.denied_sender",
                             "%s 已拒绝你的传送请求", playerName)
                             .withStyle(ChatFormatting.RED)
             );
@@ -211,7 +212,7 @@ public class TpaCommand {
                 ? requester.getDisplayName().copy().withStyle(ChatFormatting.AQUA)
                 : Component.literal("该玩家");
         player.sendSystemMessage(
-                Component.translatableWithFallback("swthb.tpa.denied_receiver",
+                Msg.tr("swthb.tpa.denied_receiver",
                         "已拒绝 %s 的传送请求", requesterName)
                         .withStyle(ChatFormatting.RED)
         );

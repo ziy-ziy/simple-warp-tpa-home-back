@@ -21,6 +21,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.portal.TeleportTransition;
 import net.minecraft.world.phys.Vec3;
 import zy.swthb.config.ModConfig;
+import zy.swthb.i18n.Msg;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -66,7 +67,7 @@ public class HomeCommand {
 
         if (home == null) {
             source.sendFailure(
-                    Component.translatableWithFallback("swthb.home.not_found",
+                    Msg.tr("swthb.home.not_found",
                             "找不到名为 \"%s\" 的家", name)
                             .withStyle(ChatFormatting.RED)
             );
@@ -78,7 +79,7 @@ public class HomeCommand {
         ServerLevel targetLevel = source.getServer().getLevel(dimKey);
 
         if (targetLevel == null) {
-            source.sendFailure(Component.translatableWithFallback(
+            source.sendFailure(Msg.tr(
                     "swthb.home.dimension_invalid", "家的维度数据异常，无法传送"));
             return 0;
         }
@@ -98,7 +99,7 @@ public class HomeCommand {
                 player,
                 transition,
                 () -> player.sendSystemMessage(
-                        Component.translatableWithFallback("swthb.home.teleported",
+                        Msg.tr("swthb.home.teleported",
                                 "已传送到家 \"%s\"", name)
                                 .withStyle(ChatFormatting.GREEN)
                 ),
@@ -119,14 +120,14 @@ public class HomeCommand {
         List<ModConfig.HomeEntry> homes = config.getHomes(player.getUUID());
 
         // 列表标题
-        Component title = Component.translatableWithFallback("swthb.home.list_title",
+        Component title = Msg.tr("swthb.home.list_title",
                 "=== 你的家 (%s/%s) ===", String.valueOf(homes.size()), String.valueOf(config.getMaxHomes()))
                 .withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD);
         player.sendSystemMessage(title);
 
         if (homes.isEmpty()) {
             player.sendSystemMessage(
-                    Component.translatableWithFallback("swthb.home.empty",
+                    Msg.tr("swthb.home.empty",
                             "暂无已设置的家，使用 /sethome <名称> 来设置")
                             .withStyle(ChatFormatting.GRAY)
             );
@@ -142,7 +143,7 @@ public class HomeCommand {
                             .withColor(ChatFormatting.GREEN)
                             .withClickEvent(new ClickEvent.RunCommand("/home " + h.getName()))
                             .withHoverEvent(new HoverEvent.ShowText(
-                                    Component.translatableWithFallback("swthb.home.click_teleport",
+                                    Msg.tr("swthb.home.click_teleport",
                                             "点击传送至 \"%s\"", h.getName()))));
 
             Component infoComp = Component.literal("  [")
@@ -173,7 +174,7 @@ public class HomeCommand {
 
         if (!isUpdate && config.isAtMaxHomes(player.getUUID())) {
             source.sendFailure(
-                    Component.translatableWithFallback("swthb.home.max_reached",
+                    Msg.tr("swthb.home.max_reached",
                             "家的数量已达上限 (%s)，请先使用 /delhome 删除一个家",
                             String.valueOf(config.getMaxHomes()))
                             .withStyle(ChatFormatting.RED)
@@ -192,13 +193,13 @@ public class HomeCommand {
 
         if (isUpdate) {
             player.sendSystemMessage(
-                    Component.translatableWithFallback("swthb.home.updated",
+                    Msg.tr("swthb.home.updated",
                             "已更新家 \"%s\" 的位置", name)
                             .withStyle(ChatFormatting.GREEN)
             );
         } else {
             player.sendSystemMessage(
-                    Component.translatableWithFallback("swthb.home.set_success",
+                    Msg.tr("swthb.home.set_success",
                             "已设置家 \"%s\" (%s/%s)", name,
                             String.valueOf(config.getHomeCount(player.getUUID())),
                             String.valueOf(config.getMaxHomes()))
@@ -221,14 +222,14 @@ public class HomeCommand {
         ModConfig config = ModConfig.getInstance();
         if (config.removeHome(player.getUUID(), name)) {
             player.sendSystemMessage(
-                    Component.translatableWithFallback("swthb.home.deleted",
+                    Msg.tr("swthb.home.deleted",
                             "已删除家 \"%s\"", name)
                             .withStyle(ChatFormatting.GREEN)
             );
             return 1;
         } else {
             source.sendFailure(
-                    Component.translatableWithFallback("swthb.home.not_found",
+                    Msg.tr("swthb.home.not_found",
                             "找不到名为 \"%s\" 的家", name)
                             .withStyle(ChatFormatting.RED)
             );

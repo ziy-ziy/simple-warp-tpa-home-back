@@ -59,4 +59,7 @@
   "swthb.dim.overworld": "オーバーワールド",
   "swthb.dim.nether": "ネザー",
   "swthb.dim.end": "エンド"
+  ,
+"swthb.config.language_set": "モッドの言語を %s から %s に変更しました",
+  "swthb.config.language_invalid": "未対応の言語コード: %s (利用可能: auto、%s)"
 }

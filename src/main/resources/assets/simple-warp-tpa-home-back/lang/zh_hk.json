@@ -57,4 +57,7 @@
   "swthb.dim.overworld": "主世界",
   "swthb.dim.nether": "下界",
   "swthb.dim.end": "末地"
+  ,
+"swthb.config.language_set": "已將模組語言從 %s 修改為 %s",
+  "swthb.config.language_invalid": "不支援的語言代碼：%s（可用：auto、%s）"
 }

@@ -59,4 +59,7 @@
   "swthb.dim.overworld": "Верхний мир",
   "swthb.dim.nether": "Нижний мир",
   "swthb.dim.end": "Край"
+  ,
+"swthb.config.language_set": "Язык мода изменён с %s на %s",
+  "swthb.config.language_invalid": "Неподдерживаемый код языка: %s (доступные: auto, %s)"
 }

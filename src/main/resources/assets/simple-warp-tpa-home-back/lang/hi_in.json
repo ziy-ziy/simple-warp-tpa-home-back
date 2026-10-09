@@ -59,4 +59,7 @@
   "swthb.dim.overworld": "ओवरवर्ल्ड",
   "swthb.dim.nether": "नेदर",
   "swthb.dim.end": "एंड"
+  ,
+"swthb.config.language_set": "मॉड भाषा %s से %s में बदली गई",
+  "swthb.config.language_invalid": "असमर्थित भाषा कोड: %s (उपलब्ध: auto, %s)"
 }

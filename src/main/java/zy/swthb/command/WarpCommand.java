@@ -20,6 +20,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.portal.TeleportTransition;
 import net.minecraft.world.phys.Vec3;
 import zy.swthb.config.ModConfig;
+import zy.swthb.i18n.Msg;
 
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -71,7 +72,7 @@ public class WarpCommand {
 
         if (warp == null) {
             source.sendFailure(
-                    Component.translatableWithFallback("swthb.warp.not_found",
+                    Msg.tr("swthb.warp.not_found",
                             "找不到名为 \"%s\" 的公共传送点", name)
                             .withStyle(ChatFormatting.RED)
             );
@@ -83,7 +84,7 @@ public class WarpCommand {
         ServerLevel targetLevel = source.getServer().getLevel(dimKey);
 
         if (targetLevel == null) {
-            source.sendFailure(Component.translatableWithFallback(
+            source.sendFailure(Msg.tr(
                     "swthb.warp.dimension_invalid", "公共传送点的维度数据异常，无法传送"));
             return 0;
         }
@@ -103,7 +104,7 @@ public class WarpCommand {
                 player,
                 transition,
                 () -> player.sendSystemMessage(
-                        Component.translatableWithFallback("swthb.warp.teleported",
+                        Msg.tr("swthb.warp.teleported",
                                 "已传送到公共传送点 \"%s\"", name)
                                 .withStyle(ChatFormatting.GREEN)
                 ),
@@ -123,14 +124,14 @@ public class WarpCommand {
         ModConfig config = ModConfig.getInstance();
         Map<String, ModConfig.WarpEntry> warps = config.getWarps();
 
-        Component title = Component.translatableWithFallback("swthb.warp.list_title",
+        Component title = Msg.tr("swthb.warp.list_title",
                 "=== 公共传送点列表 (%s) ===", String.valueOf(warps.size()))
                 .withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD);
         player.sendSystemMessage(title);
 
         if (warps.isEmpty()) {
             player.sendSystemMessage(
-                    Component.translatableWithFallback("swthb.warp.empty",
+                    Msg.tr("swthb.warp.empty",
                             "暂无公共传送点，请联系管理员添加")
                             .withStyle(ChatFormatting.GRAY)
             );
@@ -148,7 +149,7 @@ public class WarpCommand {
                             .withColor(ChatFormatting.LIGHT_PURPLE)
                             .withClickEvent(new ClickEvent.RunCommand("/warp " + warpName))
                             .withHoverEvent(new HoverEvent.ShowText(
-                                    Component.translatableWithFallback("swthb.warp.click_teleport",
+                                    Msg.tr("swthb.warp.click_teleport",
                                             "点击传送至 \"%s\"", warpName))));
 
             Component infoComp = Component.literal("  [")
@@ -179,7 +180,7 @@ public class WarpCommand {
         boolean isUpdate = config.getWarp(name) != null;
         if (!isUpdate && config.getWarps().size() >= config.getMaxWarps()) {
             source.sendFailure(
-                    Component.translatableWithFallback("swthb.warp.max_reached",
+                    Msg.tr("swthb.warp.max_reached",
                             "公共传送点数量已达上限 (%s)，请先删除一个",
                             String.valueOf(config.getMaxWarps()))
                             .withStyle(ChatFormatting.RED)
@@ -197,14 +198,14 @@ public class WarpCommand {
 
         if (isUpdate) {
             source.sendSuccess(() ->
-                    Component.translatableWithFallback("swthb.warp.updated",
+                    Msg.tr("swthb.warp.updated",
                             "已更新公共传送点 \"%s\" 的位置", name)
                             .withStyle(ChatFormatting.GREEN),
                     true
             );
         } else {
             source.sendSuccess(() ->
-                    Component.translatableWithFallback("swthb.warp.set_success",
+                    Msg.tr("swthb.warp.set_success",
                             "已设置公共传送点 \"%s\"", name)
                             .withStyle(ChatFormatting.GREEN),
                     true
@@ -226,7 +227,7 @@ public class WarpCommand {
         ModConfig config = ModConfig.getInstance();
         if (config.removeWarp(name)) {
             source.sendSuccess(() ->
-                    Component.translatableWithFallback("swthb.warp.deleted",
+                    Msg.tr("swthb.warp.deleted",
                             "已删除公共传送点 \"%s\"", name)
                             .withStyle(ChatFormatting.GREEN),
                     true
@@ -234,7 +235,7 @@ public class WarpCommand {
             return 1;
         } else {
             source.sendFailure(
-                    Component.translatableWithFallback("swthb.warp.not_found",
+                    Msg.tr("swthb.warp.not_found",
                             "找不到名为 \"%s\" 的公共传送点", name)
                             .withStyle(ChatFormatting.RED)
             );

@@ -59,4 +59,7 @@
   "swthb.dim.overworld": "العالم العلوي",
   "swthb.dim.nether": "السفلى",
   "swthb.dim.end": "النهاية"
+  ,
+"swthb.config.language_set": "تم تغيير لغة المود من %s إلى %s",
+  "swthb.config.language_invalid": "رمز لغة غير مدعوم: %s (المتاحة: auto, %s)"
 }
