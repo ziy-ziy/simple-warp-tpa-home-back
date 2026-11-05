@@ -6,6 +6,7 @@
 一个轻量级 **Fabric** 模组，提供 **TPA**、**Home**、**Warp**、**Back** 四大功能。
 没有弹窗，无需前置，完整翻译！装上就能用！
 
+
 ---
 
 ## 功能总览
@@ -16,8 +17,11 @@
 | **TPA** | `/tpa <玩家>` | 所有人 | 向目标玩家发送传送请求 |
 | | `/tpay` | 所有人 | 接受传送请求 |
 | | `/tpan` | 所有人 | 拒绝传送请求 |
+| | `/tpaauto [accept\|deny\|off]` | 所有人 | 设置自动接受/自动拒绝 TPA 请求；不带参数查看当前设置（1.4 新增） |
+| | `/tpaauto whitelist <add\|remove\|list>` | **OP 专用** | 管理 TPA 白名单；名单内的玩家（如假人）会自动接受 `/tpa` / `/tphere` 请求（1.4 新增） |
+| | `/tphere <玩家>` | 所有人 | 向指定玩家发送"传送到你身边"的请求，对方需手动接受/拒绝，不受自动处理设置影响（适合开启自动拒绝时使用，1.4 新增） |
 | **Home** | `/sethome <名称>` | 所有人 | 在当前位置设置家（支持中文名） |
-| | `/home <名称>` | 所有人 | 传送到指定的家 |
+| | `/home [名称]` | 所有人 | 传送到指定的家；不填名称则传送到第一个家（1.4 新增） |
 | | `/homes` | 所有人 | 列出所有家（可点击传送） |
 | | `/delhome <名称>` | 所有人 | 删除一个家 |
 | **Warp** | `/warp <名称>` | 所有人 | 传送到指定传送点 |
@@ -28,7 +32,7 @@
 | | `/swthbconfig maxWarps <数量>` | **OP 专用** | 修改 Warp 最大数量（默认 5 个） |
 | | `/swthbconfig teleportDelay <秒>` | **OP 专用** | 修改传送倒计时（默认 0 秒） |
 | | `/swthbconfig backEnabled true/false` | **OP 专用** | 开启/关闭 Back 功能（默认关闭） |
-| | `/swthbconfig teleportEffects true/false` | **所有人** | 开启/关闭传送粒子效果（默认关闭） |
+| | `/swthbconfig teleportEffects true/false` | **所有人** | 开启/关闭传送粒子效果（默认关闭，全服共享） |
 | | `/swthbconfig reload` | **OP 专用** | 从磁盘重新加载配置 |
 | | `/swthbconfig save` | **OP 专用** | 手动保存配置到磁盘 |
 
@@ -44,21 +48,26 @@
 
 ### 传送粒子效果
 - 默认关闭（`teleportEffectsEnabled: false`）
-- 开启后，每次传送会播放末影人风格的音效和紫色粒子
-- 所有人可通过 `/swthbconfig teleportEffects true/false` 自行开关
+- 开启后，每次传送（包括 `/back`）会播放末影人风格的音效和紫色粒子（1.4 新增：`/back` 也会播放）
+- 该开关为**全服共享**配置：任何玩家执行 `/swthbconfig teleportEffects true/false` 都会对所有玩家生效
 
 ### TPA 传送请求
 
 玩家 A 执行 `/tpa 玩家B` 后：
-- 玩家 A 收到："**[玩家B] 的传送请求已发送，等待回应...**"
+- 玩家 A 收到："**已向 [玩家B] 发送传送请求，等待回应...**"
 - 玩家 B 收到："**[玩家A] 请求传送到你的位置 [接受] [拒绝]**"
 - **接受 / 拒绝** 按钮可在聊天栏直接点击执行
 - 请求超时时间：**60 秒**
 - 支持跨维度传送
+- 玩家可用 `/tpaauto accept` 自动接受、`/tpaauto deny` 自动拒绝、`/tpaauto off` 恢复手动确认（1.4 新增）
+- 自动处理模式按玩家保存，重进游戏后依然生效（1.4 新增）
+- 开启自动拒绝后，可用 `/tphere <玩家>` 向对方发送"传送到你身边"的请求，对方点击接受后才会传送（始终需要手动确认，不受自动接受/自动拒绝设置影响；白名单假人除外，1.4 新增）
+- OP 可用 `/tpaauto whitelist add <玩家名>` 把假人加入白名单，白名单内的玩家收到 `/tpa` 或 `/tphere` 时会自动接受，无需点击（适用于假人 mod，1.4 新增）
 
 ### Home 家系统
 
 - 每位玩家默认最多 **5 个家**（可通过 `/swthbconfig` 修改）
+- 直接执行 `/home`（不带名称）会传送到第一个家（1.4 新增）
 - 家名称支持中文（如 `/sethome 工业区`）
 - 家名相同自动更新坐标（不增加数量）
 - `/homes` 列表中的家名可点击直接传送
@@ -96,7 +105,13 @@
   },
   "warps": {
     "spawn": { "world": "minecraft:overworld", "x": 0, "y": 70, "z": 0, "yaw": 0, "pitch": 0 }
-  }
+  },
+  "tpaModes": {
+    "玩家UUID": "ACCEPT"
+  },
+  "tpaWhitelist": [
+    "假人名字"
+  ]
 }
 ```
 
@@ -123,6 +138,7 @@
 A lightweight **Fabric** mod featuring four core functions: **TPA**, **Home**, **Warp**, and **Back**.
 No pop-up windows, no required dependencies, fully localized translations! Install and play instantly!
 
+
 ---
 
 ## Feature Overview
@@ -133,8 +149,11 @@ No pop-up windows, no required dependencies, fully localized translations! Insta
 | **TPA** | `/tpa <player>` | All Players | Send a teleport request to the target player |
 | | `/tpay` | All Players | Accept an incoming teleport request |
 | | `/tpan` | All Players | Decline an incoming teleport request |
+| | `/tpaauto [accept\|deny\|off]` | All Players | Set auto-accept/auto-deny for TPA requests; run without arguments to view the current setting (new in 1.4) |
+| | `/tpaauto whitelist <add\|remove\|list>` | **OP Only** | Manage the TPA whitelist; whitelisted players (e.g. bots) auto-accept `/tpa` / `/tphere` requests (new in 1.4) |
+| | `/tphere <player>` | All Players | Send a request asking the player to teleport to you; they must manually accept or deny, unaffected by auto-handling (useful when auto-deny is enabled; new in 1.4) |
 | **Home** | `/sethome <name>` | All Players | Set a home at your current position |
-| | `/home <name>` | All Players | Teleport to the specified home |
+| | `/home [name]` | All Players | Teleport to the specified home; to the first home if no name is given (new in 1.4) |
 | | `/homes` | All Players | List all your homes (clickable for instant teleport) |
 | | `/delhome <name>` | All Players | Delete a specific home |
 | **Warp** | `/warp <name>` | All Players | Teleport to the specified public warp |
@@ -145,7 +164,7 @@ No pop-up windows, no required dependencies, fully localized translations! Insta
 | | `/swthbconfig maxWarps <amount>` | **OP Only** | Adjust the global maximum number of warps (default: 5) |
 | | `/swthbconfig teleportDelay <seconds>` | **OP Only** | Change the teleport countdown (default: 0 seconds) |
 | | `/swthbconfig backEnabled true/false` | **OP Only** | Enable/disable the Back feature (default: off) |
-| | `/swthbconfig teleportEffects true/false` | **All Players** | Toggle teleport particle effects (default: off) |
+| | `/swthbconfig teleportEffects true/false` | **All Players** | Toggle teleport particle effects (default: off, server-wide) |
 | | `/swthbconfig reload` | **OP Only** | Reload configuration data from disk |
 | | `/swthbconfig save` | **OP Only** | Manually save all configuration to disk |
 
@@ -161,8 +180,8 @@ No pop-up windows, no required dependencies, fully localized translations! Insta
 
 ### Teleport Particle Effects
 - Off by default (`teleportEffectsEnabled: false`)
-- When enabled, plays an Enderman-style teleport sound and purple particles on every teleport
-- All players can toggle this via `/swthbconfig teleportEffects true/false`
+- When enabled, plays an Enderman-style teleport sound and purple particles on every teleport (including `/back`; `/back` support is new in 1.4)
+- This is a **server-wide** setting: any player can toggle it via `/swthbconfig teleportEffects true/false`, and it affects everyone
 
 ### TPA Teleport Request System
 
@@ -172,10 +191,15 @@ When Player A runs `/tpa PlayerB`:
 - The [Accept] and [Deny] buttons are clickable directly in chat
 - Request timeout duration: **60 seconds**
 - Cross-dimension teleportation supported
+- Players can use `/tpaauto accept` to auto-accept, `/tpaauto deny` to auto-deny, and `/tpaauto off` to return to manual confirmation (new in 1.4)
+- Auto-handling settings are saved per player and persist across sessions (new in 1.4)
+- With auto-deny enabled, use `/tphere <player>` to ask another player to teleport to you; they must accept before teleporting (always requires manual confirmation and is not affected by the auto-accept/auto-deny setting; whitelisted bots are the only exception; new in 1.4)
+- OPs can use `/tpaauto whitelist add <player>` to whitelist bots/fake players; whitelisted players automatically accept incoming `/tpa` or `/tphere` requests without clicking (useful for bot mods; new in 1.4)
 
 ### Player Home System
 
 - Each player has a default limit of **5 homes** (adjustable via `/swthbconfig`)
+- Running `/home` with no name teleports to your first home (new in 1.4)
 - Home names support Chinese characters (e.g. `/sethome Industrial Zone`)
 - Re-setting a home with an identical name overwrites coordinates without consuming an extra home slot
 - Home names in the `/homes` list are clickable for instant teleport
@@ -213,7 +237,13 @@ All data is stored in `saves/<save>/data/simple-warp-tpa-home-back/data.json`:
   },
   "warps": {
     "spawn": { "world": "minecraft:overworld", "x": 0, "y": 70, "z": 0, "yaw": 0, "pitch": 0 }
-  }
+  },
+  "tpaModes": {
+    "PlayerUUID": "ACCEPT"
+  },
+  "tpaWhitelist": [
+    "BotName"
+  ]
 }
 ```
 

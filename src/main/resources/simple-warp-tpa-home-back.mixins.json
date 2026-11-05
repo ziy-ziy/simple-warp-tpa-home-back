@@ -1,0 +1,17 @@
+{
+	"required": true,
+	"package": "zy.swthb.mixin",
+	"compatibilityLevel": "JAVA_25",
+	"mixins": [
+		"DeathMixin"
+	],
+	"client": [
+		"ChatAutoCloseMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	},
+	"overwrites": {
+		"requireAnnotations": true
+	}
+}
